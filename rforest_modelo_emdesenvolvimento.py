@@ -49,17 +49,13 @@ mae = mean_absolute_error(y_test, y_pred)
 
 print(f"Erro medio absoluto: {mae:.2f}")
 
-# Recriar coluna de data a partir de ano e mês (se ainda não tiver feito)
-
 resultados = x_test.copy()
 resultados['year'] = resultados['year'].astype(str)
 resultados['month'] = resultados['month'].astype(str).str.zfill(2)
 resultados['Data'] = pd.to_datetime(resultados['year'] + '-' + resultados['month'] + '-01')
 
-# Criar nova coluna só com o nome do mês (abreviado ou completo)
 resultados['MesNome'] = resultados['Data'].dt.strftime('%b')  # Use '%B' para nome completo em português
 
-# Ordenar pelo tempo, se necessário
 resultados = resultados.sort_values('Data')
 
 resultados['Volume_Real'] = y_test.values
@@ -73,19 +69,14 @@ resultados.to_excel('resultadorforest.xlsx', index=False)
 import matplotlib.pyplot as plt
 import numpy as np
 
-# 1. Criar coluna combinada com mês/ano e tipo de pneu
 resultados['Grupo'] = resultados['Data'].dt.strftime('%b/%Y') + ' - ' + resultados['Tipo_Pneu_cod'].astype(str)
 
-# 2. Selecionar as colunas para plotagem
 categorias = resultados['Grupo']
 valores_reais = resultados['Volume_Real']
 valores_previstos = resultados['Volume_Previsto']
 
-# 3. Gerar posições no eixo X
-x = np.arange(len(categorias))  # posição de cada barra
-largura = 0.4  # largura das colunas
-
-# 4. Plotar gráfico de colunas lado a lado
+x = np.arange(len(categorias))  
+largura = 0.4 
 plt.figure(figsize=(14, 6))
 plt.bar(x - largura/2, valores_reais, width=largura, label='Real')
 plt.bar(x + largura/2, valores_previstos, width=largura, label='Previsto')
